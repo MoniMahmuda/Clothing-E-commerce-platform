@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TrendStyle - Notifications</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background-color: #fefefe;
+      color: #333;
+      padding-top: 70px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 0.3rem 1rem;
+    }
+    .navbar .navbar-brand {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #3a5a40;
+    }
+    .navbar .nav-link {
+      font-size: 0.9rem;
+      color: #2d6a4f !important;
+    }
+    .notification {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .notification.unread {
+      background-color: #e6f7ff;
+      font-weight: 600;
+    }
+    .notification:hover {
+      background-color: #f5f5f5;
+    }
+    .notification-time {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    .container {
+      flex-grow: 1;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .header {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-clear {
+      font-size: 0.85rem;
+      color: #d9534f;
+      border: 1px solid #d9534f;
+      background: transparent;
+      padding: 5px 12px;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .btn-clear:hover {
+      background-color: #d9534f;
+      color: #fff;
+      text-decoration: none;
+    }
+    .footer {
+      background-color: #463838;
+      padding: 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #fff;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">TrendStyle</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav me-auto">
+          <!-- Nav links example -->
+         
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Notifications</a>
+          </li>
+          <!-- add more nav items as needed -->
+        </ul>
+
+        <!-- Cart button -->
+       
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
+              Profile
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><h6 class="dropdown-header">Signed in as</h6></li>
+              <li><span class="dropdown-item-text">Name: User</span></li>
+              <li><span class="dropdown-item-text">Email: user@example.com</span></li>
+              <li><span class="dropdown-item-text">Last order: N/A</span></li>
+              <li><hr class="dropdown-divider" /></li>
+             
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container my-4">
+    <div class="header">
+      <h2>Notifications</h2>
+      <button class="btn-clear" id="clearBtn">Clear All</button>
+    </div>
+
+    <div id="notificationsList">
+      <!-- Notifications will be rendered here -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    © 2025 TrendStyle. Powered by Moni -__-
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Sample notifications (you can load from server or localStorage)
+    let notifications = [
+      { id: 1, message: "Your order #1234 has been shipped.", time: "2 hours ago", read: false },
+      { id: 2, message: "New arrivals are now available in the Women category.", time: "1 day ago", read: false },
+      { id: 3, message: "Flash sale starts tomorrow! Get ready.", time: "3 days ago", read: true },
+      { id: 4, message: "Your refund for order #1200 was processed.", time: "5 days ago", read: true },
+    ];
+
+    // Load notifications from localStorage if available
+    const saved = localStorage.getItem('notifications');
+    if (saved) {
+      notifications = JSON.parse(saved);
+    }
+
+    const notificationsList = document.getElementById('notificationsList');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function renderNotifications() {
+      if (notifications.length === 0) {
+        notificationsList.innerHTML = `<p class="text-muted text-center">No notifications</p>`;
+        return;
+      }
+
+      notificationsList.innerHTML = notifications.map(n => `
+        <div class="notification ${n.read ? '' : 'unread'}" data-id="${n.id}">
+          <div>${n.message}</div>
+          <div class="notification-time">${n.time}</div>
+        </div>
+      `).join('');
+
+      // Add click listeners for marking as read/unread
+      document.querySelectorAll('.notification').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = parseInt(el.getAttribute('data-id'));
+          toggleReadStatus(id);
+        });
+      });
+    }
+
+    function toggleReadStatus(id) {
+      notifications = notifications.map(n => {
+        if (n.id === id) n.read = !n.read;
+        return n;
+      });
+      saveNotifications();
+      renderNotifications();
+    }
+
+    function clearAllNotifications() {
+      if (confirm('Are you sure you want to clear all notifications?')) {
+        notifications = [];
+        saveNotifications();
+        renderNotifications();
+      }
+    }
+
+    function saveNotifications() {
+      localStorage.setItem('notifications', JSON.stringify(notifications));
+    }
+
+    clearBtn.addEventListener('click', clearAllNotifications);
+
+    // Initial render
+    renderNotifications();
+
+    // Cart count stub (you can replace with your real cart logic)
+    function updateCartCount() {
+      // Example: get cart count from localStorage
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-count').innerText = count > 0 ? `(${count})` : '';
+    }
+    document.addEventListener('DOMContentLoaded', updateCartCount);
+
+    // Stub for cart modal (replace or remove if you want)
+    function showCartModal() {
+      alert('Cart modal will show here!');
+    }
+    // Stub logout
+    function logout() {
+      alert('Logged out!');
+    }
+  </script>
+
+</body>
+</html>

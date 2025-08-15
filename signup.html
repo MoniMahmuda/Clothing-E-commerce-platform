@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+      background: url('images/sign up background.avif') no-repeat center center / cover;
+    }
+    form {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 320px;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 30px;
+      border: none;
+      background: #2193b0;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-size: 16px;
+      width: 100%;
+    }
+    button:hover {
+      background: #18607a;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+  <form action="signup.php" method="POST">
+    <h2>Sign Up</h2>
+    <input id="name" name="name" type="text" placeholder="Full Name" required />
+    <input id="email" name="email" type="email" placeholder="Email" required />
+    <input id="password" name="password" type="password" placeholder="Password" required />
+    <label for="role">Select Role:</label>
+    <select id="role" name="role" required>
+      <option value="" disabled selected>Select your role</option>
+      <option value="customer">Customer</option>
+      <option value="supplier">Supplier</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button type="submit">Sign Up</button>
+  </form>
+
+</body>
+</html>
