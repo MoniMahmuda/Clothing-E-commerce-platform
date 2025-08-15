@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supplier Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f5f6fa;
+      color: #2c3e50;
+    }
+
+    header {
+      background-color: #1abc9c;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    nav {
+      background: white;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 15px 0;
+      border-bottom: 1px solid #ddd;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    nav a:hover,
+    nav a.active {
+      background: #ecf0f1;
+      color: #1abc9c;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #1abc9c;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .actions button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      margin-right: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .edit-btn {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .cancel-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    footer {
+      background-color: #1abc9c;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      th {
+        display: none;
+      }
+
+      td {
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+      }
+
+      td::before {
+        position: absolute;
+        left: 10px;
+        top: 15px;
+        white-space: nowrap;
+        font-weight: bold;
+        content: attr(data-label);
+      }
+
+      .actions {
+        text-align: right;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    Admin Dashboard
+  </header>
+
+  <nav>
+    <a href="dashboard-admin.html">Dashboard Home</a>
+    <a href="#">Manage Products</a>
+    <a href="supplier-dashboard.html" class="active">Manage Suppliers</a>
+    <a href="#">Manage Users</a>
+    <a href="order-dashboard.html">Orders</a>
+    <a href="home.html">Logout</a>
+  </nav>
+
+  <div class="container">
+    <h2>Supplier Product Uploads</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Supplier Name</th>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Upload Time</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Supplier Name">Tania Fashion</td>
+          <td data-label="Product">Sari</td>
+          <td data-label="Price">৳2500</td>
+          <td data-label="Upload Time">2025-08-01 09:10 AM</td>
+          <td class="actions" data-label="Actions">
+            <button class="edit-btn">Edit</button>
+            <button class="cancel-btn">Cancel</button>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="Supplier Name">Modern Trends</td>
+          <td data-label="Product">Western Top</td>
+          <td data-label="Price">৳1500</td>
+          <td data-label="Upload Time">2025-08-01 11:20 AM</td>
+          <td class="actions" data-label="Actions">
+            <button class="edit-btn">Edit</button>
+            <button class="cancel-btn">Cancel</button>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="Supplier Name">Urban Wear</td>
+          <td data-label="Product">Shirt</td>
+          <td data-label="Price">৳1200</td>
+          <td data-label="Upload Time">2025-08-02 10:35 AM</td>
+          <td class="actions" data-label="Actions">
+            <button class="edit-btn">Edit</button>
+            <button class="cancel-btn">Cancel</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    &copy; 2025 TrendStyle Admin Dashboard
+  </footer>
+
+</body>
+</html>

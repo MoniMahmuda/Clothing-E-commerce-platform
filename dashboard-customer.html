@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TrendStyle Customer Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #222;
+      color: white;
+      padding: 10px 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .brand h1 {
+      margin-left: 10px;
+      font-size: 22px;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .top-right input {
+      padding: 5px;
+      margin-right: 15px;
+    }
+
+    .cart-display, .logout-btn {
+      background: #4CAF50;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-left: 10px;
+    }
+
+    .main {
+      display: flex;
+    }
+
+    .sidenav {
+      width: 0;
+      background: #333;
+      overflow-x: hidden;
+      transition: 0.3s;
+      min-height: 100vh;
+      padding-top: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .sidenav a {
+      display: block;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+    }
+
+    .sidenav a:hover {
+      background: #575757;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      margin-left: 0;
+      transition: margin-left 0.3s;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: start;
+    }
+
+    .card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+      width: 220px;
+      text-align: center;
+      transition: transform 0.3s;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 6px;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .card h3 {
+      margin: 10px 0 5px;
+      font-size: 18px;
+    }
+
+    .card p.summary {
+      font-size: 14px;
+      color: #555;
+      margin: 5px 0 10px;
+    }
+
+    .price {
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    select, .qty-control {
+      margin: 5px 0;
+    }
+
+    .qty-control button {
+      padding: 4px 8px;
+      margin: 0 3px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .qty-control input {
+      width: 30px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 3px;
+    }
+
+    .cart-summary {
+      background: white;
+      border-radius: 6px;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+    }
+
+    .cart-summary h3 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+
+    .total {
+      font-weight: bold;
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .pay-btn {
+      display: block;
+      width: 100%;
+      background: #4CAF50;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand" onclick="toggleNav()">
+      <span style="font-size: 26px;">☰</span>
+      <h1>TrendStyle</h1>
+    </div>
+    <div class="top-right">
+      <input type="text" id="searchInput" placeholder="Search clothes..." onkeyup="searchClothes()" />
+      <button class="cart-display" onclick="viewCart()">🛒 Cart <span id="cart-count">0</span></button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- Side Navigation -->
+  <div id="sidenav" class="sidenav">
+    <a href="#" onclick="showCategory('home')">🏠 Home</a>
+    <a href="#" onclick="showCategory('women')">Women</a>
+    <a href="#" onclick="showCategory('men')">Men</a>
+    <a href="#" onclick="showCategory('kids')">Kids</a>
+    <a href="#">About Us</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="content" id="main-content">
+      <h2 id="category-title">Welcome to TrendStyle</h2>
+      <div class="products" id="product-list"></div>
+    </div>
+  </div>
+
+  <script>
+    const user = { email: "customer@example.com", role: "customer" }; // Mock user for demo
+
+    const products = {
+      women: [
+        { name: "Sari", img: "images/sari1.jpg", price: 40, summary: "Beautiful floral printed dress.", sizes: ["S","M","L"] },
+        { name: "Red Saree", img: "images/sari2.jpg", price: 55, summary: "Elegant red saree for occasions.", sizes: ["M","L","XL"] },
+        { name: "Red Saree", img: "images/sari3.jpg", price: 55, summary: "Elegant red saree for occasions.", sizes: ["M","L","XL"] },
+        { name: "Red Saree", img: "images/sari4.jpg", price: 55, summary: "Elegant red saree for occasions.", sizes: ["M","L","XL"] },
+        { name: "Red Saree", img: "images/sari5.jpg", price: 55, summary: "Elegant red saree for occasions.", sizes: ["M","L","XL"] }
+      ],
+      men: [
+        { name: "Formal Shirt", img: "images/T-Shirt 1.jpg", price: 30, summary: "Classic formal shirt for work.", sizes: ["M","L","XL"] },
+        { name: "Denim Jacket", img: "https://images.unsplash.com/photo-1618354691306-76821c39e7e3", price: 45, summary: "Trendy denim jacket for men.", sizes: ["L","XL"] }
+      ],
+      kids: [
+        { name: "Kids T-shirt", img: "https://images.unsplash.com/photo-1556909190-4474ee1b6f5d", price: 15, summary: "Comfortable cotton T-shirt.", sizes: ["XS","S","M"] },
+        { name: "Kids Shorts", img: "https://images.unsplash.com/photo-1581349478300-4c7ba4b58c2c", price: 12, summary: "Soft shorts for kids.", sizes: ["XS","S","M"] }
+      ]
+    };
+
+    let currentCategory = "women";
+    let cart = [];
+
+    showCategory(currentCategory);
+    updateCartCount();
+
+    function toggleNav() {
+      const nav = document.getElementById("sidenav");
+      const content = document.getElementById("main-content");
+      if (nav.style.width === "200px") {
+        nav.style.width = "0";
+        content.style.marginLeft = "0";
+      } else {
+        nav.style.width = "200px";
+        content.style.marginLeft = "200px";
+      }
+    }
+
+    function showCategory(category) {
+      currentCategory = category;
+      const productList = document.getElementById("product-list");
+      const categoryTitle = document.getElementById("category-title");
+      categoryTitle.innerText = category.charAt(0).toUpperCase() + category.slice(1) + " Collection";
+
+      productList.innerHTML = products[category]
+        .map(
+          (p, index) => `
+          <div class="card">
+            <img src="${p.img}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p class="summary">${p.summary}</p>
+            <p class="price">$${p.price}</p>
+            <div>
+              <label>Size:</label>
+              <select id="size-${index}">
+                ${p.sizes.map(size => `<option>${size}</option>`).join('')}
+              </select>
+            </div>
+            <div class="qty-control">
+              <button onclick="changeQty(this, -1)">-</button>
+              <input type="text" value="1" readonly>
+              <button onclick="changeQty(this, 1)">+</button>
+            </div>
+            <button onclick="addToCart(${index})" style="background:#4CAF50; color:white; border:none; padding:8px 12px; border-radius:4px; margin-top:5px;">Add to Cart</button>
+          </div>
+        `
+        )
+        .join("");
+    }
+
+    function changeQty(btn, delta) {
+      const input = btn.parentNode.querySelector('input');
+      let val = parseInt(input.value) + delta;
+      if (val < 1) val = 1;
+      input.value = val;
+    }
+
+    function addToCart(index) {
+      const product = products[currentCategory][index];
+      const size = document.getElementById(`size-${index}`).value;
+      const qty = parseInt(document.querySelectorAll('.qty-control input')[index].value);
+
+      cart.push({ name: product.name, price: product.price, size: size, qty: qty });
+      updateCartCount();
+      alert(`${product.name} added to cart.`);
+    }
+
+    function updateCartCount() {
+      document.getElementById("cart-count").textContent = cart.length;
+    }
+
+    function viewCart() {
+      if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+      }
+
+      let cartHTML = `
+        <div class="cart-summary">
+          <h3>Your Cart</h3>
+          ${cart.map(item => `
+            <div class="cart-item">
+              <div>${item.name} (${item.size}) x${item.qty}</div>
+              <div>$${item.price * item.qty}</div>
+            </div>
+          `).join('')}
+          <div class="total">Total: $${cart.reduce((sum, i) => sum + (i.price * i.qty), 0)}</div>
+          <button class="pay-btn" onclick="payNow()">Proceed to Payment</button>
+        </div>
+      `;
+
+      document.getElementById("main-content").innerHTML = cartHTML;
+    }
+
+    function payNow() {
+  alert("Payment Successful! Thank you for your purchase.");
+  cart = [];
+  updateCartCount();
+  // Reload current category products
+  document.getElementById("main-content").innerHTML = `
+    <h2 id="category-title">${currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)} Collection</h2>
+    <div class="products" id="product-list"></div>
+  `;
+  showCategory(currentCategory);
+}
+
+    function logout() {
+      alert("Logged out.");
+      // location.href = "login.html"; // uncomment for real redirect
+    }
+
+    function searchClothes() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = products[currentCategory].filter(p => p.name.toLowerCase().includes(input));
+      const productList = document.getElementById("product-list");
+
+      productList.innerHTML = filtered
+        .map(
+          (p) => `
+          <div class="card">
+            <img src="${p.img}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p class="summary">${p.summary}</p>
+            <p class="price">$${p.price}</p>
+          </div>
+        `
+        )
+        .join("");
+    }
+  </script>
+</body>
+</html>
+
+
+

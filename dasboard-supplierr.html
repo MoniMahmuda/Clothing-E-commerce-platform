@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vendor Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding-top: 60px; /* for fixed navbar */
+    }
+
+    /* Top navbar */
+    .navbar {
+      background: #333;
+      color: white;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-right: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    .navbar .logout {
+      margin-left: auto;
+      color: #ff6666;
+    }
+
+    .main {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Form styles */
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a onclick="showSection('home')">🏠 Home</a>
+    <a onclick="showSection('upload')">Upload Picture</a>
+    <a onclick="showSection('products')">My Products</a>
+    <a class="logout" onclick="logout()">Logout</a>
+  </nav>
+
+  <div class="main">
+    <!-- Home Section -->
+    <div id="home" class="section">
+      <h1>Supplier Profile Dashboard</h1>
+      <p><strong>Name:</strong> Mahmuda Akter Moni</p>
+      <p><strong>Age:</strong> 25</p>
+      <p><strong>Gender:</strong> Female</p>
+      <p><strong>Address:</strong> Cumilla, Bangladesh</p>
+      <p><strong>Total Clothes Sold:</strong> 120</p>
+      <p><strong>Total Uploaded Pictures:</strong> <span id="uploadCount">0</span></p>
+      <p><strong>Total Earnings:</strong> $2500</p>
+    </div>
+
+    <!-- Upload Picture Section -->
+    <div id="upload" class="section" style="display:none;">
+      <h1>Upload Product</h1>
+      <form id="uploadForm" onsubmit="return uploadProduct(event)">
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" required>
+
+        <label for="productPrice">Price:</label>
+        <input type="number" id="productPrice" required min="0" step="0.01">
+
+        <label for="productCategory">Category:</label>
+        <select id="productCategory" required>
+          <option value="">Select Category</option>
+          <option value="sari">Sari</option>
+          <option value="three_piece">Three Piece</option>
+          <option value="lehenga">Lehenga</option>
+          <option value="western">Western</option>
+          <option value="shirt">Shirt</option>
+          <option value="pant">Pant</option>
+          <option value="tshirt">T-Shirt</option>
+          <option value="panjabi">Panjabi</option>
+          <!-- Add more categories if needed -->
+        </select>
+
+        <label for="productImage">Upload Image:</label>
+        <input type="file" id="productImage" accept="image/*" required>
+
+        <button type="submit">Upload</button>
+      </form>
+    </div>
+
+    <!-- My Products Section -->
+    <div id="products" class="section" style="display:none;">
+      <h1>My Uploaded Products</h1>
+      <div id="productList"></div>
+    </div>
+  </div>
+
+  <script>
+    // Show/hide sections
+    function showSection(section) {
+      document.querySelectorAll('.section').forEach(s => {
+        s.style.display = s.id === section ? 'block' : 'none';
+      });
+      if(section === 'products') loadProducts();
+      if(section === 'home') updateUploadCount();
+    }
+
+    // Upload product handler
+    function uploadProduct(event) {
+      event.preventDefault();
+      const name = document.getElementById('productName').value.trim();
+      const price = parseFloat(document.getElementById('productPrice').value);
+      const category = document.getElementById('productCategory').value;
+      const imageInput = document.getElementById('productImage');
+
+      if (!category) {
+        alert("Please select a category");
+        return false;
+      }
+
+      const file = imageInput.files[0];
+      if (!file) {
+        alert("Please select an image");
+        return false;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const products = JSON.parse(localStorage.getItem('vendorProducts') || '[]');
+        products.push({
+          name,
+          price,
+          category,
+          img: e.target.result
+        });
+        localStorage.setItem('vendorProducts', JSON.stringify(products));
+        alert("Product uploaded successfully!");
+
+        // Reset form
+        document.getElementById('uploadForm').reset();
+
+        // Update upload count and switch to products tab
+        updateUploadCount();
+        showSection('products');
+
+        // Also update customer products localStorage (simulate sending to customer page)
+        updateCustomerProducts(products);
+      };
+      reader.readAsDataURL(file);
+
+      return false;
+    }
+
+    // Load products for vendor
+    function loadProducts() {
+      const products = JSON.parse(localStorage.getItem('vendorProducts') || '[]');
+      const productList = document.getElementById('productList');
+      if(products.length === 0) {
+        productList.innerHTML = "<p>No products uploaded yet.</p>";
+        return;
+      }
+      productList.innerHTML = products.map(p => `
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px; display:flex; align-items:center;">
+          <img src="${p.img}" alt="${p.name}" style="width:100px; height:100px; object-fit:cover; margin-right:15px; border-radius:6px;">
+          <div>
+            <h3 style="margin:0">${p.name}</h3>
+            <p>Price: $${p.price.toFixed(2)}</p>
+            <p>Category: ${p.category}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Update upload count display
+    function updateUploadCount() {
+      const products = JSON.parse(localStorage.getItem('vendorProducts') || '[]');
+      document.getElementById('uploadCount').innerText = products.length;
+    }
+
+    // Simulate sending products to customer page by saving to another localStorage key
+    function updateCustomerProducts(vendorProducts) {
+      // You could add logic here to merge with existing customerProducts if needed
+      // For simplicity, we overwrite customerProducts with all vendorProducts
+      localStorage.setItem('customerProducts', JSON.stringify(vendorProducts));
+    }
+
+    function logout() {
+      alert("Logged out.");
+      // Implement logout functionality or redirect here
+    }
+
+    // Initial load
+    updateUploadCount();
+    showSection('home');
+  </script>
+
+</body>
+</html>
+

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order Invoice - TrendStyle</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+
+  <div class="container my-5">
+    <h2 class="mb-4">Order Invoice</h2>
+    <div id="alert-msg" class="alert alert-danger d-none"></div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped" id="orders-table">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Product Name</th>
+            <th>Size</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Order Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Orders will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    async function fetchOrders() {
+      try {
+        const response = await fetch('fetch_orders.php');
+        const data = await response.json();
+
+        if (!data.success) {
+          showError(data.message || 'Failed to load orders.');
+          return;
+        }
+
+        const tbody = document.querySelector('#orders-table tbody');
+        tbody.innerHTML = '';
+
+        if (data.orders.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center">No orders found.</td></tr>`;
+          return;
+        }
+
+        data.orders.forEach(order => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${order.id}</td>
+            <td>${order.product_name}</td>
+            <td>${order.size}</td>
+            <td>${order.quantity}</td>
+            <td>$${parseFloat(order.price).toFixed(2)}</td>
+            <td>${order.order_date}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        showError('Error fetching orders: ' + error.message);
+      }
+    }
+
+    function showError(msg) {
+      const alertDiv = document.getElementById('alert-msg');
+      alertDiv.textContent = msg;
+      alertDiv.classList.remove('d-none');
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchOrders);
+    
+  </script>
+
+</body>
+</html>
+

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Supplier Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('images/vendor background.jpg'); /* ensure the path/file name exists */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar { width: 200px; background: #963a3a; min-height: 100vh; padding-top: 20px; position: fixed; left: 0; top: 0; }
+    .sidebar a { display: block; color: rgb(210, 184, 184); text-decoration: none; padding: 12px 20px; }
+    .sidebar a:hover { background: #575757; }
+    .main { padding: 80px 20px 10px; width: 100%; max-width: 1000px; margin: 0 auto; }
+    header { background: #437b81; color: rgb(255, 248, 248); padding: 15px 20px; text-align: center; }
+    .card { background: rgb(255, 252, 252); padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; }
+    table th, table td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+    table th { background: #f5f5f5; }
+    input[type="text"], input[type="number"], input[type="file"] {
+      width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;
+    }
+    button { background: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #3ea444; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+    .product-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
+    .product-card { background: #fff; padding: 10px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; }
+    .topnav { background-color: #437b81; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+    .topnav a { color: #fff; padding: 10px 16px; text-decoration: none; display: block; }
+    .topnav a:hover { background-color: #245734ad; }
+    .nav-left, .nav-right { display: flex; align-items: center; }
+    #upload { display: none; padding: 50px; background-color: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 900px; margin: 0 auto; }
+    #upload h2 { font-size: 24px; color: #2c4c3b; text-align: center; margin-bottom: 25px; }
+    #upload form { display: flex; flex-direction: column; }
+    #upload label { margin-bottom: 6px; font-weight: bold; color: #333; }
+    #upload input[type="text"], #upload input[type="number"], #upload input[type="file"] {
+      padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; background-color: #fefefe; transition: border-color 0.3s ease;
+    }
+    #upload input:focus { border-color: #2ecc71; outline: none; }
+    #upload button[type="submit"] { padding: 12px; font-size: 16px; font-weight: bold; color: white; background-color: #2ecc71; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s ease; }
+    #upload button[type="submit"]:hover { background-color: #27ae60; }
+    .danger { background: #dc3545; }
+    .danger:hover { background: #c82333; }
+  </style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<div class="topnav">
+  <div class="nav-left">
+    <a class="navbar-brand" href="#" style="font-size: 22px; color: #2ecc71; font-weight: bold;">TrendStyle</a>
+    <a href="#" onclick="showSection('home')">Profile</a>
+    <a href="#" onclick="showSection('upload')">Product</a>
+    <a href="#" onclick="showSection('products')">Product List</a>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" onclick="logout()">Logout</a>
+  </div>
+</div>
+
+<div class="main">
+  <header>
+    <h1>Supplier Dashboard</h1>
+  </header>
+
+  <!-- Home Section -->
+  <div id="home" class="card">
+    <h2>Supplier Profile Dashboard</h2>
+    <div style="display:flex; align-items:center; margin-bottom:20px;">
+      <img src="images/moni nsu.jpg" alt="Supplier Photo" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-right:20px;">
+      <div>
+        <h3>Name: Mahmuda Akter Moni</h3>
+        <p>Age: 23</p>
+        <p>Gender: Female</p>
+        <p>Address: Cumilla, Bangladesh</p>
+      </div>
+    </div>
+
+    <table>
+      <tr><th>Statistic</th><th>Value</th></tr>
+      <tr><td>Total Clothes Sold</td><td>120</td></tr>
+      <tr><td>Total Uploaded Pictures</td><td id="uploadCount">0</td></tr>
+      <tr><td>Total Earnings</td><td>$2500</td></tr>
+    </table>
+  </div>
+
+  <!-- Upload Picture Section -->
+  <div id="upload" class="card" style="display:none;">
+    <h2>Upload Product</h2>
+    <form id="uploadForm">
+      <label>Product Name:</label>
+      <input type="text" id="productName" name="name" required>
+
+      <label>Price:</label>
+      <input type="number" id="productPrice" name="price" step="0.01" required>
+
+      <label>Size:</label>
+      <input type="text" id="productSize" name="size" required>
+
+      <label>Upload Image:</label>
+      <input type="file" id="productImage" name="image" accept="image/*" required>
+
+      <button type="submit">Upload</button>
+    </form>
+  </div>
+
+  <!-- My Product Section -->
+  <div id="products" class="card" style="display:none;">
+    <h2>My Uploaded Products</h2>
+    <div id="productList" class="product-grid"></div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'api'; // change if your api folder is elsewhere
+
+  function showSection(section) {
+    document.getElementById('home').style.display = section === 'home' ? 'block' : 'none';
+    document.getElementById('upload').style.display = section === 'upload' ? 'block' : 'none';
+    document.getElementById('products').style.display = section === 'products' ? 'block' : 'none';
+    if (section === 'products') loadProducts();
+    updateUploadCount();
+  }
+
+  // Upload product -> POST multipart/form-data to PHP
+  document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+      const res = await fetch(`${API_BASE}/upload_product.php`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      alert(data.message || 'Product uploaded successfully!');
+      form.reset();
+      updateUploadCount();
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+
+  async function loadProducts() {
+    try {
+      const res = await fetch(`${API_BASE}/list_products.php`);
+      const data = await res.json();
+      const products = data.products || [];
+      const productList = document.getElementById('productList');
+      if (products.length === 0) {
+        productList.innerHTML = '<p>No products yet.</p>';
+        return;
+      }
+      productList.innerHTML = products.map(p => `
+        <div class="product-card">
+          <img src="${p.image_path}" alt="${escapeHtml(p.name)}">
+          <h4>${escapeHtml(p.name)}</h4>
+          <p>Price: $${Number(p.price).toFixed(2)}</p>
+          <p>Size: ${escapeHtml(p.size)}</p>
+          <button class="danger" onclick="deleteProduct(${p.id})">Delete</button>
+        </div>
+      `).join('');
+      document.getElementById('uploadCount').innerText = products.length;
+    } catch (err) {
+      alert('Failed to load products');
+    }
+  }
+
+  async function deleteProduct(id) {
+    if (!confirm('Delete this product?')) return;
+    const fd = new FormData();
+    fd.append('id', id);
+    try {
+      const res = await fetch(`${API_BASE}/delete_product.php`, {
+        method: 'POST',
+        body: fd
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Delete failed');
+      loadProducts();
+      updateUploadCount();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function updateUploadCount() {
+    try {
+      const res = await fetch(`${API_BASE}/list_products.php`);
+      const data = await res.json();
+      const products = data.products || [];
+      document.getElementById('uploadCount').innerText = products.length;
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function logout() { alert("Logged out."); }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, s => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[s]));
+  }
+
+  // Initial
+  updateUploadCount();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <style>
+   body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+      background: url(images/log\ in\ background.jpg) no-repeat center center / cover;
+   }
+   form {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 320px;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .input-container {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    input[type="email"], input[type="password"] {
+      width: 90%;
+      padding: 10px;
+      padding-right: 40px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 14px;
+      color: #888;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: #2193b0;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #18607a;
+    }
+    .forgot {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #2193b0;
+      text-decoration: none;
+    }
+    .forgot:hover {
+      text-decoration: underline;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <form action="login.php" method="POST">
+    <h2>Login</h2>
+    <div class="input-container">
+      <input name="email" type="email" placeholder="Email" required>
+    </div>
+    <div class="input-container">
+      <input id="password" name="password" type="password" placeholder="Password" required>
+      <span class="toggle-password" onclick="togglePassword()">Show</span>
+    </div>
+    <button type="submit">Login</button>
+    <a href="signup.html" class="forgot">if u have no account? Sign UP</a>
+
+    <!-- PHP Error Message -->
+   <!--<?php
+    if (!empty($_GET['error'])) {
+        echo "<p class='error'>" . htmlspecialchars($_GET['error']) . "</p>";
+    }
+    ?>--> 
+  </form>
+
+  <script><button class="btn btn-outline-light" type="submit">Search</button>
+    function togglePassword() {
+      const passInput = document.getElementById('password');
+      const toggle = document.querySelector('.toggle-password');
+      if (passInput.type === "password") {
+        passInput.type = "text";
+        toggle.textContent = "Hide";
+      } else {
+        passInput.type = "password";
+        toggle.textContent = "Show";
+      }
+    }
+  </script>
+</body>
+</html>
